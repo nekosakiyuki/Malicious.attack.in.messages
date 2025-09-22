@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>留言板公告、規範、分析與標註惡意語氣留言</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-width: 0;
+      overflow-x: hidden;
+    }
+    body {
+      background: #202b44;
+      color: #eaf5ff;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+.accordion-list {
+  max-width: 1000px;
+  margin: 40px auto 40px auto;
+  padding: 0 6vw;
+}
+.modern-accordion {
+  margin: 22px 0 34px 0;
+  border-radius: 16px;
+background: #253b5a;
+  box-shadow: 0 2px 8px #0a142d11;
+  overflow: hidden;
+}
+.modern-toggle {
+  width: 100%;
+  background: #25365a;
+  color: #eaf5ff;
+  border: none;
+  outline: none;
+  padding: 20px 28px 20px 32px;
+  font-size: 1.13em;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 14px 14px 0 0;
+  border-bottom: 1.5px solid #295eb244;
+  box-shadow: 0 2px 10px #0002;
+  transition: background .22s, color .22s, box-shadow .28s;
+  position: relative;
+  z-index: 2;
+  gap: 12px;
+}
+.modern-toggle:hover, .modern-accordion.open .modern-toggle {
+  background: linear-gradient(92deg, #3163a0 60%, #4ebfff33 120%);
+  color: #fff;
+  box-shadow: 0 4px 18px #47aaff44, 0 2px 8px #0002;
+}
+.toggle-icon-wrap {
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px #47aaff33;
+  width: 2.25em;
+  height: 2.25em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  transition: background .22s, box-shadow .22s;
+}
+.arrow-svg {
+  width: 1.25em;
+  height: 1.25em;
+  display: block;
+  transition: transform .35s cubic-bezier(.67,0,.5,1.1);
+  transform: rotate(0deg);
+  stroke: #3163a0;
+}
+.modern-accordion.open .arrow-svg {
+  transform: rotate(90deg);
+  stroke: #fff;
+}
+.accordion-label {
+  flex: 1;
+  text-align: left;
+  font-size: 1em;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+}
+.modern-panel {
+  max-height: 0;
+  overflow: hidden;
+  background: #2c4174 !important;  /* 想要的顏色 */
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.18s;
+  opacity: 0;
+  pointer-events: none;
+  padding: 0 22px;
+}
+.modern-accordion.open .modern-panel {
+  max-height: 1500px;
+  opacity: 1;
+  pointer-events: auto;
+  padding: 18px 22px 18px 22px;
+  overflow: auto;
+}
+.modern-panel-content {
+  font-size: 1.06em;
+  color: #eaf5ff;
+  line-height: 2;
+  letter-spacing: 0.01em;
+}
+.analyze-img-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  margin-bottom: 12px;
+}
+.analyze-img-row img {
+  width: 110px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px #0002;
+  background: #23293a;
+  object-fit: contain;
+  border: 2px solid #3a97ff44;
+  flex-shrink: 0;
+}
+.analyze-main {
+  flex: 1;
+  min-width: 0;
+}
+.analyze-quote {
+  background: #3241693c;
+  color: #ffd99e;
+  padding: 7px 12px;
+  border-radius: 7px;
+  font-size: 1.03em;
+  margin-bottom: 8px;
+  margin-top: 3px;
+  line-height: 1.8;
+}
+.analyze-point-title {
+  color: #b2eaff;
+  font-weight: bold;
+  margin-top: 7px;
+  margin-bottom: 4px;
+  font-size: 1.02em;
+  letter-spacing: 0.02em;
+}
+.analyze-list {
+  margin-top: 0.2em;
+  margin-bottom: 0;
+  padding-left: 1.6em;
+  color: #eaf5ff;
+  font-size: 1em;
+}
+.analysis-key {
+  color: #ff7e7e;
+  font-weight: bold;
+}
+.analysis-purpose {
+  color: #9cf6c7;
+  font-weight: bold;
+}
+@media (max-width: 1000px) {
+  .accordion-list { max-width: 99vw; }
+  .modern-panel { padding: 12px 2vw 8px 2vw; }
+  .analyze-img-row { gap: 12px;}
+  .analyze-img-row img { width: 70px; max-width: 24vw; }
+}
+@media (max-width: 600px) {
+  .analyze-img-row { flex-direction: column; gap: 7px; }
+  .analyze-img-row img { width: 98vw; max-width: 330px; display: block; margin: 0 auto;}
+  .modern-toggle { font-size: 1em; padding: 15px 5vw 15px 7vw;}
+  .modern-panel, .modern-panel-content { font-size: 0.98em;}
+}
+#backToTop {
+  position: fixed;
+  right: 32px;
+  bottom: 64px;
+  z-index: 1200;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(120deg, #338edc 70%, #233b68 100%);
+  color: #fff;
+  border: none;
+  font-size: 1.7em;
+  box-shadow: 0 4px 14px #233b6840;
+  cursor: pointer;
+  display: none; /* 預設隱藏，由JS控制 */
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.18s;
+  font-weight: bold;
+}
+#backToTop:hover {
+  background: #23418b;
+  transform: scale(1.09);
+}
+/* RWD */
+@media (max-width: 600px) {
+  .modern-toggle {
+    font-size: 1em;
+    padding: 14px 4vw 14px 6vw;
+    gap: 7px;
+  }
+  .toggle-icon-wrap {
+    width: 2em; height: 2em; margin-right: 5px;
+  }
+}
+/* 公告、規範、分析主框 */
+.section {
+  max-width: 1000px;
+  margin: 36px auto 0 auto;
+  border-radius: 18px;
+  box-shadow: 0 6px 32px #0005;
+  background: linear-gradient(90deg,#25335a 90%,#5caaff1e 100%);
+  border: 2px solid #4a7fff;
+  overflow: hidden;
+}
+.section-title {
+  background: linear-gradient(90deg,#294b8b 60%,#7ea4ed32 100%);
+  color: #e5f2ff;
+  font-size: 1.38em;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  padding: 22px 36px 12px 36px;
+  border-bottom: 1.5px solid #3550a388;
+}
+.section-body {
+  padding: 22px 36px 12px 36px;
+  font-size: 1.09em;
+  line-height: 2;
+  color: #eaf5ff;
+  letter-spacing: 0.01em;
+}
+.section ul, .section ol {
+  margin: 8px 0 8px 26px;
+  padding-left: 5px;
+}
+.section li {
+  margin-bottom: 5px;
+  line-height: 1.7;
+}
+.section-sign {
+  text-align: right;
+  color: #8db4f7;
+  font-size: 1.08em;
+  margin-top: 14px;
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+/* 分析區塊美化 */
+.analysis-block {
+  margin-bottom: 24px;
+  padding: 20px 28px 14px 28px;
+  background: linear-gradient(90deg,#2d3b5e 90%,#ff6a6a13 100%);
+  border-left: 6px solid #47aaff;
+  border-radius: 12px;
+  box-shadow: 0 3px 16px #1b1c2b40;
+}
+.analysis-title {
+  font-weight: bold;
+  color: #a4c7ff;
+  font-size: 1.07em;
+  margin-bottom: 6px;
+}
+.analysis-quote {
+  background: #32416955;
+  color: #ffe3c3;
+  padding: 9px 14px;
+  border-radius: 6px;
+  font-size: 1.03em;
+  margin-bottom: 7px;
+  margin-top: 3px;
+  word-break: break-word;
+}
+.analysis-list {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 20px;
+}
+.analysis-key {
+  color: #ff7e7e;
+  font-weight: bold;
+}
+.analysis-point {
+  color: #ffe8b2;
+  font-weight: bold;
+}
+.analysis-purpose {
+  color: #9cf6c7;
+  font-weight: bold;
+}
+/* 留言板 */
+.message-board {
+  background: rgba(24,32,60,0.98);
+  border-radius: 18px;
+  box-shadow: 0 12px 32px #000a;
+  border: 2px solid #3550a3;
+  padding: 26px 0 14px 0;
+  max-width: 1000px;
+  margin: 38px auto 40px auto;
+}
+.message {
+  display: flex;
+  align-items: flex-start;
+  border-bottom: 1.2px solid #32416980;
+  padding: 14px 36px 10px 24px;
+  color: #eaf5ff;
+  background: linear-gradient(90deg,rgba(34,48,90,0.97) 85%,rgba(60,90,160,0.09));
+  position: relative;
+  font-size: 1.08em;
+  transition: background .3s, box-shadow .3s;
+}
+.message:last-child { border-bottom: none; }
+.message-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-right: 12px;
+  background: linear-gradient(135deg,#3a497a 60%,#7eb7ff 100%);
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+.message-content {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.message-user { font-weight: bold; color: #a4c7ff; }
+.message-meta { font-size: 0.98em; color: #7fa6e3; margin-left: 7px; }
+.message-text { margin-top: 4px; line-height: 1.8; letter-spacing: 0.01em; }
+/* 標註惡意留言 */
+.message-bad {
+  border: 2px solid #ff3b4e !important;
+  background: linear-gradient(90deg, #2d233c 85%, #ff3b4e33 100%) !important;
+  box-shadow: 0 0 16px #ff3b4e66;
+}
+.message-bad .bad-flag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  font-size: 1.32em;
+  color: #ff3b4e;
+  font-weight: bold;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 4px #ff3b4e44;
+  border: 2.6px solid #ff3b4e;
+  z-index: 3;
+  user-select: none;
+  transition: box-shadow .2s;
+}
+.message-bad .bad-flag:hover {
+  box-shadow: 0 0 12px #ff3b4eb0, 0 0 1px #fff;
+}
+.message-bad-tip {
+  display: inline-block;
+  color: #ff3b4e;
+  font-size: 0.98em;
+  margin-left: 10px;
+  background: #fff4f7;
+  padding: 2px 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+@media (max-width: 700px) {
+  .section, .message-board { max-width: 99vw; }
+  .section-title, .section-body, .analysis-block { padding-left: 3vw; padding-right: 3vw;}
+  .section-title, .section-body { padding-left: 3vw; padding-right: 3vw;}
+  .analysis-block { padding: 12px 3vw 10px 3vw;}
+  .message { padding: 10px 2vw 8px 2vw; font-size: 0.97em;}
+  .message-bad .bad-flag { 
+    width: 28px; height: 28px; font-size: 1em; left: -20px;
+  }
+  .message-avatar { width: 38px; height: 38px; }
+}
+    /* 證明區美化 */
+    .proof-section {
+      background: linear-gradient(102deg, #fafdff 70%, #e4ecfb 100%);
+      border-left: 6px solid #ff6b81;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px #89b4ed18;
+      padding: 22px 28px 22px 25px;
+      margin: 32px auto 32px auto;
+      max-width: 720px;
+      color: #222c3a;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+      position: relative;
+      transition: box-shadow .18s;
+    }
+    .center-items {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .proof-title {
+      font-size: 1.19em;
+      font-weight: bold;
+      color: #d35400;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      justify-content: center;
+    }
+    .proof-icon {
+      font-size: 1.37em;
+    }
+    .proof-img-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    .proof-img-list img {
+      width: 130px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #ffb8c4;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px #f8b6b933;
+      background: #fff;
+    }
+    .proof-img-list img:hover {
+      transform: scale(1.08);
+      box-shadow: 0 4px 24px #ffb8c48c;
+      border-color: #ee5253;
+    }
+    .proof-video-title {
+      font-size: 1.08em;
+      font-weight: 600;
+      color: #2157A5;
+      margin: 20px 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      justify-content: center;
+    }
+    .video-icon {
+      font-size: 1.25em;
+    }
+    .proof-video-thumb {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .proof-video-frame {
+      width: 320px;
+      height: 180px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid #b9d7f8;
+      background: #000;
+      box-shadow: 0 1px 8px #b9d7f844;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .proof-video-frame iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: auto;
+    }
+    .play-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.2em;
+      color: #fff;
+      background: rgba(40, 60, 80, 0.11);
+      pointer-events: none;
+      transition: background 0.18s;
+    }
+    .proof-video-thumb:hover .play-overlay {
+      background: rgba(40,60,80,0.25);
+    }
+    .proof-note {
+      color: #b84b0a;
+      font-size: 0.98em;
+      margin-top: 10px;
+      padding-left: 2px;
+      text-align: center;
+    }
+
+</style>
+</head>
+<body>
+  <!-- 浮水印 -->
+<div style="
+    position: fixed;
+    right: 24px;
+    bottom: 20px;
+    font-size: 2em;
+    color: rgba(255,255,255,0.42);
+    font-weight: bold;
+    text-shadow: 0 0 6px #0008;
+    user-select: none;
+    pointer-events: none;
+    z-index: 9999;
+  ">貓崎雪浮水印</div>
+</div>
+<!-- 禁止右鍵 -->
+<script>
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('dragstart', e => e.preventDefault());
+document.getElementById('myVideo').addEventListener('keydown', e => e.preventDefault());
+
+</script>
+<!-- 回到頂部按鈕 -->
+<button id="backToTop" title="回到頂部" aria-label="回到頂部">↑</button>
+
+<!-- 澄清公告區 -->
+<div class="section">
+  <div class="section-title">📢 公告</div>
+  <div class="section-body">
+    近期本留言板出現多則
+    <span class="analysis-key">惡意扭曲、抄襲我言論、斷章取義、侮辱與人身攻擊</span>
+    的留言。這些語句不僅傷害我個人，也嚴重影響社群遊戲風氣。
+    <br><br>在此澄清：
+    <ul>
+      <li>本人所有發言均可對照原始紀錄，絕無「造謠」、「洗白」等不實行徑。</li>
+      <li>惡意模仿、反諷、嘲笑心理壓力等話語，已造成實質傷害，我將保留法律追訴權利。</li>
+      <li>不歡迎任何形式的霸凌、羞辱、群體壓力或煽動。</li>
+      <li>禁止人身攻擊、辱罵、群體霸凌、惡意模仿或抄襲他人言論。</li>
+      <li>禁止散布謠言、曲解、斷章取義。</li>
+      <li>標註疑似惡意語氣留言刪除處理。</li>
+      <li>拒絕任何形式的網路暴力。</li>
+      <li>違規者將永久封鎖並視情節報警處理。</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 留言板 -->
+<div class="message-board" id="messageBoard"></div>
+<script>
+// 惡意關鍵詞
+const BAD_KEYWORDS = [
+  "抹黑", "造謠", "哭戲", "裝", "難掩悲哀", "洗白", "人多就是有理", "面具", "慢慢等", "魔爪", "逃避", "歪腦筋", "bug不夠破", "最大BUG", "屁X", "黑單", "理虧", "看不懂人話", "小號", "小手手","噁心", "自爆", "威脅", "邏輯","公開","邏輯","憂鬱症","背後"
+];
+// 留言資料
+const messages = [
+  { user: "o雨楓o", time: "2025.09.08-17.09.04", text: "惡意抹黑難掩悲哀 哭戲再像不會變白人多就是有理面具再装人也不變人在做天在看阿 現實法律不理妳,洗讃也輸?" },
+  { user: "o雨楓o", time: "2025.08.30-22.49.58", text: "因壓力過小 精神不錯 醫生建議我遠離她 或是她別來造謠我偶爾請我自己幫玩幻塔 還請大家體諒 嘿嘿嘿" },
+  { user: "o雨楓o", time: "2025.08.21-20.03.42", text: "你的證據 也跟大家的都一樣 你有別人也有甚至更多是哪來的自信 可以洗白還要浪費多少人的時間你才滿意?" },
+ { user: "o雨楓o", time: "2025.09.08-21.12.27", text: "等通知 等到要2周年能不能快點?反正我不在DC打字給妳愉截圖妳也拿我沒辦法,我不會浪費社會資源妳呢?" },
+      { user: "o雨楓o", time: "2025.08.21-19.59.15", text: "收到通知 某人表示不要提起他因此修改一下這些對話只針對成就榜上的000 歡迎你找我公開對質不要逃避" },
+      { user: "o雨楓o", time: "2025.09.17-15.54.58", text: "針對妳提出的賭局 我早就說過妳就公開我們之間所有DC密語對話不敢公開 妳就閉嘴我缺啥自信?" },
+      { user: "o雨楓o", time: "2025.09.17-15.57.58", text: "有截到時間我反擊是有錯喔?存圖證據?那妳這些刻意PO出疑似騷擾的對話 算個啥?其它又不PO" },
+      { user: "o雨楓o", time: "2025.09.17-15.55.16", text: "賭局不對等 那叫賭 沒半點好處我幹嘛要賭妳邏妳邏輯還行?我會打這留言板 是妳前幾天 先改名片偷嘴人" },
+      { user: "o雨楓o", time: "2025.09.17-16.06.27", text: "為啥不肯收手老是在背後搞新的事情 是不是當我好欺負阿三不五時來鬧妳執著真不是一般噁心佩服" },
+      { user: "o雨楓o", time: "2025.09.17-16.04.27", text: "吃的藥 影響記憶 自己說過的話做過的事情 都可以當作沒發生別人討論妳=抹黑 邏輯100分 被討論" },
+      { user: "o雨楓o", time: "2025.09.17-16.03.140", text: "至於 報案時間 也过一年了妳慢慢等 肯定拖到時間過事實就是沒收到 不要想威脅我 醒醒 憂鬱症 真好用阿" },
+      { user: "o雨楓o", time: "2025.09.17-16.17.19", text: "還多聽到不少瓜 妳跟正常人的邏輯 不一樣 10分鐘同一件事情=多次提出這是真的很無敵拉" },
+      { user: "o雨楓o", time: "2025.09.17-16.16.23", text: "我從一開始到現在 從沒造搖妳 都是妳實際做出來的事情我講妳又怎樣 反倒是妳一直用 騷擾對話 在抹黑我" },
+      { user: "o雨楓o", time: "2025.09.17-16.12.45", text: "在來 對妳退坑以及排行 妳在 Dcard 文章内打的 還記得嗎 退坑85掛帳號賣不掉 這都是事實" },
+      { user: "o雨楓o", time: "2025.09.17-16.25.26", text: "就是妳有問題 還請妳知道這一點 我可從沒說過 無法全部公開 最初是給妳面子但現在沒耐心了要亂就一起亂" },
+      { user: "o雨楓o", time: "2025.09.17-16.23.07", text: "這邊聲明 我願意 可以公開 跟妳的所有對話但我DC已經案掉 妳也改DC名稱只能從妳那主動開放 如果妳不肯全公開" },
+      { user: "o雨楓o", time: "2025.09.17-16.20.09", text: "妳還有 其他意見 自己我 妳不是要協商?妳自己的名聲自己清楚我根本沒有必要抹黑妳妳就自爆了" },
+  { user: "妳X雙腿比你會截", time: "2025.08.27-19.46.50", text: "不是很喜歡讓人看你被霸凌的證據嗎 怎麽現在比X姐的屁X還會截" },
+  { user: "妳X雙腿比你會截", time: "2025.08.27-19.46.50", text: "所以到底要不要解釋一下為什么 DC對記錄會出現在你所謂證據的雲端上面" },
+  { user: "モーティス", time: "2025.09.06-21.49.42", text: "沒關係的 畢竟人家的底線不是底線 自己的底線才是底線" },
+  { user: "澪曦o玥", time: "2025.08.28-06.04.14", text: "既然妳很喜歡提到貴公會, 那我也提一嘴貴公會,别在那邊幫忙出謀劃策,給我乖乖玩你們的遊戲,別浪費時間在不干你們的事情上面。" },
+  { user: "澪曦o玥", time: "2025.08.28-06.01.03", text: "被我婉拒很難過是嗎?明的不行來陰的是嗎?找個時間向我解釋妳的行為,看不懂人話我可以教沒關係,不收费。" },
+  { user: "黎霞o曜", time: "2025.08.29-04.56.16", text: "玩個破塔搞出一堆破事,嫌遊戲BUG不夠破,自己下去當那個遊戲最大BUG,不修妳修誰啊。" },
+  { user: "澪曦o玥", time: "2025.08.28-06.04.14", text: "按照您的說法,那挺您的“小號”還真不少喔?可我没有查證小號真實身分的必要性喔,東西流到誰手上,那就跟誰有關,您說對嗎?" },
+  { user: "澪曦o玥", time: "2025.09.04-03.03.28", text: "您要用這種澄清方式來擺脫嫌疑也行,那提醒您以後可要管好小手手喔,畢竟很多事情我看在眼裡沒有戳破呢,要小心別再動歪腦筋邏^^" },
+  { user: "黎霞o曜", time: "2025.08.28-05.58.40", text: "妳了解,妳理解公會的立場,也尊重我以保護公會為優先的決定,妳也不會再打擾了?" },
+  { user: "黎霞o曜", time: "2025.08.29-04.48.25", text: "雨楓都能自知理虧道歉了,那麽妳還有甚么理由逃避呢?妳要伸張自己的正義我沒意見,但請妳不要把魔爪也伸出來,能不能做到?" },
+  { user: "黎霞o曜", time: "2025.08.29-04.43.21", text: "妳要去弄他是妳家的事,但如果你夠聰明,那妳就不會把歪腦筋動在我們公會頭上,我給妳一個找我講和的機會,我的DC妳知道。" },
+  { user: "黎霞o曜", time: "2025.08.29-04.34.55", text: "我行不改名坐不改姓,妳知道我是誰,把我本尊留言刪了,黑單不給留言了,是承認自己理虧所以逃避溝通的一種體現嗎?" },
+  { user: "黎霞o曜", time: "2025.08.29-04.31.46", text: "刪留言之前截圖存證沒用,我現在是跟妳就事論事,自己講過的話做不到,我只是單純很想知道妳是什麽動機去違反自己說出的話。" },
+];
+// 判斷留言是否含有惡意關鍵詞
+function isBadMessage(text) {
+  return BAD_KEYWORDS.some(keyword => text.includes(keyword));
+}
+// 渲染留言
+function renderMessages() {
+  const board = document.getElementById('messageBoard');
+  board.innerHTML = '';
+  messages.forEach(msg => {
+    const bad = isBadMessage(msg.text);
+    board.innerHTML += `
+      <div class="message${bad ? ' message-bad' : ''}">
+        ${bad ? '<span class="bad-flag">🚩</span>' : ''}
+        <div class="message-avatar"></div>
+        <div class="message-content">
+          <span class="message-user">${msg.user}</span>
+          <span class="message-meta">${msg.time}</span>
+          <div class="message-text">
+            ${msg.text}
+            ${bad ? '<span class="message-bad-tip">疑似惡意語氣</span>' : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  });
+}
+document.addEventListener('DOMContentLoaded', renderMessages);
+</script>
+
+<!-- ======= 攻擊留言分析 區塊（有圖片） ======= -->
+<div class="section" style="margin-top:22px; margin-bottom:38px;">
+  <div class="section-title">🧐 騷擾留言分析.攻擊語氣與心理手法</div>
+  <div class="section-body">
+    <div class="accordion-list">
+
+      <!--1️⃣ o雨楓o -->
+
+      <div class="modern-accordion">
+        <button class="modern-toggle" type="button">
+  <span class="toggle-icon-wrap">
+          <svg class="arrow-svg" viewBox="0 0 24 24">
+      <polyline points="8 5 16 12 8 19" fill="none" stroke="#3163a0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </span>
+  <span class="accordion-label">1️⃣ o雨楓o 截圖</span></button>
+        <div class="modern-panel">
+          <div class="modern-panel-content">
+            <div class="analyze-img-row">
+             <div class="center-items">
+<div class="proof-img-list">
+  <img src="https://i.ibb.co/KjdNvcgq/2025-09-05-154226.png" alt="">
+  <img src="https://i.ibb.co/Zz13g9Lv/2025-09-08-174728.png" alt="">
+  <img src="https://i.ibb.co/Gf1SkmXR/2025-09-08-222654.png" alt="">
+</div>
+          <div class="proof-note">
+            本證明相關圖片及影片，僅供線上查證，禁止下載或轉載。
+          </div>
+              <div class="analyze-main">
+                <div class="analysis-quote">
+                  <ul>
+                    <li>惡意抹黑難掩悲哀 哭戲再像不會變白人多就是有理面具再装人也不變人在做天在看阿 現實法律不理妳,洗讃也輸?</li>
+                    <li>（惡意學我名片說詞改編，原文：這邊我是說精神不太好，醫生要我遠離壓力來源，請朋友幫我代玩）因壓力過小 精神不錯 醫生建議我遠離她 或是她別來造謠我偶爾請我自己幫玩幻塔 還請大家體諒 嘿嘿嘿</li>
+                    <li>你的證據 也跟大家的都一樣 你有別人也有甚至更多是哪來的自信 可以洗白還要浪費多少人的時間你才滿意?</li>
+                    <li>等通知 等到要2周年能不能快點?反正我不在DC打字給妳愉截圖妳也拿我沒辦法,我不會浪費社會資源妳呢?</li>
+                    <li>收到通知 某人表示不要提起他因此修改一下這些對話只針對成就榜上的000 歡迎你找我公開對質不要逃避</li>
+                  </ul>
+                </div>
+                <div class="analyze-point-title">分析</div>
+                <ul class="analyze-list">
+                  <li><span class="analysis-key">人身攻擊+集體壓力：</span> 句子充滿否定、嘲諷，並用「人多就是有理」來合理化群體攻擊，營造你被孤立、無理取鬧的印象。</li>
+                  <li><span class="analysis-key">挪用話語反諷：</span> 明顯用你誠實表達心理壓力的話語，反過來嘲諷你在裝病、藉口。</li>
+                  <li><span class="analysis-key">證據矮化：</span> 指你的證據「跟大家一樣」、「甚至更多」，削弱你辯解的正當性和說服力。</li>
+                  <li><span class="analysis-key">拖延與藐視：</span> 嘲弄你問題無法解決，還用「我不在DC」指你沒證據。</li>
+                  <li><span class="analysis-purpose">目的：</span> 用情勒、抹黑、群體壓力讓你自我懷疑，營造「你不敢面對」假象。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<!-- 1️⃣ o雨楓o 影片區塊 -->
+      <div class="modern-accordion">
+        <button class="modern-toggle" type="button">
+  <span class="toggle-icon-wrap">
+          <svg class="arrow-svg" viewBox="0 0 24 24">
+      <polyline points="8 5 16 12 8 19" fill="none" stroke="#3163a0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </span>
+  <span class="accordion-label">1️⃣ o雨楓o 影片</span></button>
+        <div class="modern-panel">
+          <div class="modern-panel-content">
+      <div class="analyze-img-row vertical-row">
+             <div class="center-items">
+          <div class="proof-video-title"><span class="video-icon">🎬</span>影片證據</div>
+         <div class="analyze-img-row vertical-row">
+            <div class="proof-video-thumb" data-vid="1VnX4Ufzc9Urg_NaR8Oc6QgmH7mQ0wkfh">
+              <img src="https://i.ibb.co/Gf1SkmXR/2025-09-08-222654.png" alt="影片預覽圖">
+              <span class="play-icon">▶️</span>
+            </div>
+          </div>
+          <div class="proof-note">
+            本證明相關圖片及影片，僅供線上查證，禁止下載或轉載。
+          </div>
+        </div>
+        <div class="analyze-main">
+          <div class="analysis-quote" style="margin-top:0;">
+            這段影片記錄了 o雨楓o 在留言板中的語氣及爭議內容。請注意：
+            <ul>
+              <li>影片中出現多次反問、推責、情緒勒索等惡意語氣。</li>
+              <li>如有疑慮，建議可暫停於重點片段，對照留言內容。</li>
+            </ul>
+          </div>
+          <div class="analyze-point-title">分析重點</div>
+          <ul class="analyze-list">
+            <li><span class="analysis-key">攻擊手法：</span>羞辱、反問、倒打一耙、精神健康羞辱。</li>
+            <li><span class="analysis-purpose">目的：</span>製造你才是問題的假象、讓旁觀者誤判。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <!-- 2️⃣ 妳X雙腿比你會截 -->
+      <div class="modern-accordion">
+             <button class="modern-toggle" type="button">
+  <span class="toggle-icon-wrap">
+          <svg class="arrow-svg" viewBox="0 0 24 24">
+      <polyline points="8 5 16 12 8 19" fill="none" stroke="#3163a0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </span>
+  <span class="accordion-label">2️⃣ 妳X雙腿比你會截（モーティス）</span>
+</button>
+        <div class="modern-panel">
+          <div class="modern-panel-content">
+            <div class="analyze-img-row">
+             <div class="center-items">
+    <div class="proof-img-list">
+      <img src="https://i.ibb.co/DH2Xn13b/2025-08-28-161756.png" alt="留言板惡意留言騷擾1">
+      <img src="https://i.ibb.co/N2HSTPXV/904191.png" alt="留言板惡意留言騷擾2">
+    </div>
+          <div class="proof-note">
+            本證明相關圖片及影片，僅供線上查證，禁止下載或轉載。
+          </div>
+              <div class="analyze-main">
+                <div class="analysis-quote">
+                  <ul>
+                    <li>不是很喜歡讓人看你被霸凌的證據嗎 怎麽現在比X姐的屁X還會截</li>
+                    <li>所以到底要不要解釋一下為什么 DC對記錄會出現在你所謂證據的雲端上面</li>
+                    <li>Look At My Eyes! Why Tell Me Why!</li>
+                    <li>（モーティス同一個人改名留言）沒關係的 畢竟人家的底線不是底線 自己的底線才是底線</li>
+                  </ul>
+                </div>
+                <div class="analyze-point-title">分析</div>
+                <ul class="analyze-list">
+                  <li><span class="analysis-key">語言羞辱與暗示：</span> 低級形容貶低你，帶有羞辱色彩。</li>
+                  <li><span class="analysis-key">質疑證據來源：</span> 質疑證據真實性，模糊焦點。</li>
+                  <li><span class="analysis-key">嘲諷式英文：</span> 戲謔與無理，增加心理壓迫。</li>
+                  <li><span class="analysis-key">雙重標準指控：</span> 暗示你自私、不理性，削弱你的正當性。</li>
+                  <li><span class="analysis-purpose">目的：</span> 以羞辱、嘲笑、質疑並重，讓你難以自處，被旁觀者認為是自私、不理性的人。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3️⃣ 澪曦o玥 -->
+      <div class="modern-accordion">
+             <button class="modern-toggle" type="button">
+  <span class="toggle-icon-wrap">
+          <svg class="arrow-svg" viewBox="0 0 24 24">
+      <polyline points="8 5 16 12 8 19" fill="none" stroke="#3163a0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </span>
+  <span class="accordion-label">3️⃣ 澪曦o玥</span>
+</button>
+        <div class="modern-panel">
+          <div class="modern-panel-content">
+            <div class="analyze-img-row">
+             <div class="center-items">
+    <div class="proof-img-list">
+      <img src="https://i.ibb.co/CKjFSTy6/2025-08-28-161809.png" alt="留言板惡意留言騷擾1">
+      <img src="https://i.ibb.co/23YWt9vZ/2025-08-28-161819.png" alt="留言板惡意留言騷擾2">
+      <img src="https://i.ibb.co/fzkHQRH4/2025-09-04-161719.png" alt="留言板惡意留言騷擾3">
+    </div>
+          <div class="proof-note">
+            本證明相關圖片及影片，僅供線上查證，禁止下載或轉載。
+          </div>
+              <div class="analyze-main">
+                <div class="analysis-quote">
+                  <ul>
+                  <li>敝公會不插手淌水雨楓與您之間的私人恩怨,因此我沒有必要配合您所提出的加入公會以及DC頻道這件事來彌補您所謂的【資訊落差】</li>
+                  <li>為了讓雙方查證更為公平、避免單方面資訊不對等,妳希望能加入貴公會與DC公會頻道,這樣能更全面了解事件全貌,也避免後續有「資訊落差」導致的誤會?</li>
+                  <li>妳了解,妳理解公會的立場，也尊重我以保護公會為優先的決定,妳也不會再打擾了?</li>
+                    <li>既然妳很喜歡提到貴公會, 那我也提一嘴貴公會,别在那邊幫忙出謀劃策,給我乖乖玩你們的遊戲,別浪費時間在不干你們的事情上面。</li>
+                    <li>被我婉拒很難過是嗎?明的不行來陰的是嗎?找個時間向我解釋妳的行為,看不懂人話我可以教沒關係,不收费。</li>
+                    <li>妳了解,妳理解公會的立場,也尊重我以保護公會為優先的決定,妳也不會再打擾了?</li>
+                    <li>您要用這種澄清方式來擺脫嫌疑也行,那提醒您以後可要管好小手手喔,畢竟很多事情我看在眼裡沒有戳破呢,要小心別再動歪腦筋邏^^</li>
+                    <li>按照您的說法,那挺您的“小號”還真不少喔?可我没有查證小號真實身分的必要性喔,東西流到誰手上,那就跟誰有關,您說對嗎?</li>
+                  </ul>
+                </div>
+                <div class="analyze-point-title">分析</div>
+                <ul class="analyze-list">
+                 <li><span class="analysis-purpose">疑問反問手法：</span>第一則用疑問句「妳也不會再打擾了？」反問你，讓你無法回應，塑造你「多說多錯」的氛圍。</li>
+                  <li><span class="analysis-purpose">切割責任，表面中立：</span>第二則表面用「不插手私人恩怨」做切割，實際上是推卸公會對成員行為的責任，默許甚至包庇成員的惡意言論。</li>
+                  <li><span class="analysis-purpose">阻斷證據、方便造謠： </span>第三則是你正面爭取資訊公開、追求公平，有條理、語氣溫和。</span>拒絕你取得事實的管道（如加入DC頻道），同時公會內部卻繼續抹黑，讓你無法自證清白。</li>
+                  <li><span class="analysis-key">裝理性、實則貶低：</span> 第四則表面是理性建議，實質是叫你「少管閒事」。</li>
+                  <li><span class="analysis-key">人身攻擊+諷刺：</span> 第五則「看不懂人話我可以教」明顯是羞辱你智商，並用「明的不行來陰的」暗指你手段卑劣。</li>
+                  <li><span class="analysis-purpose">假裝善意結語：</span>第六則話語是將你原本的理性表達（如「我了解你立場」）直接複製，包裝成對話，實際上是用你的語氣來合理化自己的行為，讓你無法回應，塑造你「多說多錯」的氛圍。</li>
+                  <li><span class="analysis-purpose">語帶威脅、暗示你心機：</span> 第七則用「要小心別再動歪腦筋」在暗中抹黑你有不良動機。</li>
+                  <li><span class="analysis-purpose">質疑支持者、牽連他人：</span> 第八則用「小號還真不少」、「東西流到誰手上就跟誰有關」來影射你拉幫結派，甚至間接威脅你和支持者。</li>
+                  <li><span class="analysis-purpose">目的：</span> 用「裝理性」包裝羞辱，讓攻擊行為看起來有道理。後三則以詭異語氣暗諷、抹黑，企圖削弱你澄清。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- 4️⃣ -->
+      <div class="modern-accordion">
+             <button class="modern-toggle" type="button">
+  <span class="toggle-icon-wrap">
+          <svg class="arrow-svg" viewBox="0 0 24 24">
+      <polyline points="8 5 16 12 8 19" fill="none" stroke="#3163a0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </span>
+  <span class="accordion-label">4️⃣ 黎霞o曜（澪曦o玥）</span>
+</button>
+        <div class="modern-panel">
+          <div class="modern-panel-content">
+            <div class="analyze-img-row">
+             <div class="center-items">
+    <div class="proof-img-list">
+  <img src="https://i.ibb.co/9krgQZzz/902468-0.png" alt="留言板惡意留言騷擾1">
+  <img src="https://i.ibb.co/bg2nhyyS/902469-0.png" alt="留言板惡意留言騷擾2">
+</div>
+          <div class="proof-note">
+            本證明相關圖片及影片，僅供線上查證，禁止下載或轉載。
+          </div>
+              <div class="analyze-main">
+                <div class="analysis-quote"></div>
+            <ul>
+              <li>妳要去弄他是妳家的事,但如果你夠聰明,那妳就不會把歪腦筋動在我們公會頭上,我給妳一個找我講和的機會,我的DC妳知道。</li>
+              <li>我行不改名坐不改姓,妳知道我是誰,把我本尊留言刪了,黑單不給留言了,是承認自己理虧所以逃避溝通的一種體現嗎?</li>
+              <li>刪留言之前截圖存證沒用,我現在是跟妳就事論事,自己講過的話做不到,我只是單純很想知道妳是什麽動機去違反自己說出的話。</li>
+              <li>玩個破塔搞出一堆破事,嫌遊戲BUG不夠破,自己下去當那個遊戲最大BUG,不修妳修誰啊。</li>
+              <li>雨楓都能自知理虧道歉了,那麽妳還有甚么理由逃避呢?妳要伸張自己的正義我沒意見,但請妳不要把魔爪也伸出來,能不能做到?</li>
+            </ul>
+                <div class="analyze-point-title">分析</div>
+                <ul class="analyze-list">
+            <li><span class="analysis-key">語帶威脅、情緒綁架：</span> 第一則用「我給妳一個機會」像是在施捨你，語氣高高在上。</li>
+          <li><span class="analysis-key">質疑動機與誠信： </span>第二則把你刪留言、黑單的行為說成「逃避溝通」、「承認理虧」。</li>
+          <li><span class="analysis-purpose">反覆追問動機：</span> 第三則用「很想知道妳動機」來壓迫你解釋，實質是想讓你處於被審問的地位。</li>
+          <li><span class="analysis-purpose">人身攻擊（直接辱罵）：</span> 第四則直接羞辱你是「最大BUG」，語言極不尊重。</li>
+          <li><span class="analysis-purpose">情緒勒索：</span> 第五則「雨楓都自知理虧道歉了，妳還有什麼理由」是假借他人話語來逼你低頭。</li>
+          <li><span class="analysis-purpose">目的：</span> 讓你孤立無援、證據斷裂，旁觀者只聽到單方面的謠言，進一步鞏固攻擊者的話語權。試圖拒絕你正當訴求，將你排除在討論外。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- 總結 -->
+    <div class="analyze-summary">
+      <b>總結：</b>
+      <ul>
+        <li><span class="analysis-key">絕大多數攻擊留言：</span> 反覆洗版、挪用你說詞、扣帽子、群體壓力、羞辱貶低、質疑證據、情緒勒索、語帶威脅等手法。</li>
+        <li><span class="analysis-key">建議：</span>
+          <ul>
+            <li>保留所有證據（如你已做）</li>
+            <li>公開澄清時針對這些手法點破，讓旁觀者能看穿攻擊本質</li>
+            <li>不用跟進情緒罵戰，保持理性。</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ======= CSS for 分析圖片區塊 ======= -->
+<style>
+.analyze-accordion {
+  margin-bottom: 22px;
+  border-radius: 14px;
+  border-left: 5px solid #47aaff;
+  background: linear-gradient(90deg,#2d3b5e 90%,#ff6a6a13 100%);
+  box-shadow: 0 3px 14px #1b1c2b33;
+  overflow: hidden;
+  transition: box-shadow .2s;
+}
+.analyze-toggle {
+  width: 100%;
+  text-align: left;
+  background: #263e68;
+  color: #eaf5ff;
+  border: none;
+  outline: none;
+  padding: 14px 24px 14px 18px;
+  font-size: 1.13em;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.18s;
+}
+.analyze-toggle:hover, .analyze-accordion.open .analyze-toggle {
+  background: #295492;
+  color: #fff;
+}
+.analyze-toggle .chevron {
+  font-size: 1.2em;
+  margin-left: 12px;
+  transition: color .2s;
+  display: inline-block;
+  width: 1.4em;
+  text-align: center;
+}
+.analyze-accordion.open .chevron {
+  color: #ffb44f;
+}
+.analyze-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s cubic-bezier(.4,0,.2,1), opacity .2s;
+  background: transparent;
+  padding: 0 0;
+  opacity: 0.2;
+}
+.analyze-accordion.open .analyze-panel {
+  padding: 17px 19px 12px 17px;
+  max-height: 2000px; /* 防止長內容被裁切 */
+  opacity: 1;
+  transition: max-height .35s cubic-bezier(.4,0,.2,1), opacity .18s;
+  overflow: auto;
+}
+.analyze-img-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+}
+.analyze-img-row img {
+  width: 110px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px #0003;
+  background: #23293a;
+  object-fit: contain;
+  border: 2px solid #3a97ff44;
+  flex-shrink: 0;
+}
+.analyze-main {
+  flex: 1;
+  min-width: 0;
+}
+.analyze-label { display: none; } /* 用不到，只顯示在toggle上 */
+.analyze-quote {
+  background: #3241693c;
+  color: #ffd99e;
+  padding: 7px 12px;
+  border-radius: 7px;
+  font-size: 1.02em;
+  margin-bottom: 8px;
+  margin-top: 3px;
+  line-height: 1.8;
+}
+.analyze-point-title {
+  color: #b2eaff;
+  font-weight: bold;
+  margin-top: 7px;
+  margin-bottom: 4px;
+  font-size: 1.02em;
+  letter-spacing: 0.02em;
+}
+.analyze-list {
+  margin-top: 0.2em;
+  margin-bottom: 0;
+  padding-left: 1.6em;
+  color: #eaf5ff;
+  font-size: 1em;
+}
+.analysis-key {
+  color: #ff7e7e;
+  font-weight: bold;
+}
+.analysis-purpose {
+  color: #9cf6c7;
+  font-weight: bold;
+}
+.analyze-summary {
+  background: #2c4174 !important;
+  border-radius: 10px;
+  margin: 32px 0 0 0;
+  padding: 14px 14px 12px 14px;
+  font-size: 1.06em;
+  box-shadow: 0 2px 8px #0002;
+  color: #eaf5ff;
+  line-height: 2;
+}
+.analyze-summary ul { margin: 0.7em 0 0 1.2em; }
+.analyze-summary li { margin-bottom: 0.5em; }
+@media (max-width: 900px) {
+  .analyze-panel { padding: 12px 2vw 8px 2vw; }
+  .analyze-img-row { gap: 12px;}
+  .analyze-img-row img { width: 70px; max-width: 24vw; }
+}
+@media (max-width: 600px) {
+  .analyze-img-row { flex-direction: column; gap: 7px; }
+  .analyze-img-row img { width: 98vw; max-width: 330px; display: block; margin: 0 auto;}
+}
+</style>
+<!-- Accordion 功能JS -->
+<script>
+document.querySelectorAll('.modern-toggle').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const accordion = this.closest('.modern-accordion');
+    accordion.classList.toggle('open');
+  });
+});
+</script>
+
+<script>
+    // 讓使用者按 ESC 也能關閉面板
+    document.addEventListener('keydown', function(e){
+      if(e.key === "Escape") {
+        document.querySelector('.privacy-panel').classList.remove('active');
+      }
+    });
+    // 點擊 panel 以外區域自動關閉（可選）
+    document.addEventListener('click', function(e){
+      var panel = document.querySelector('.privacy-panel');
+      if (panel.classList.contains('active')) {
+        if (!panel.contains(e.target) && !e.target.classList.contains('privacy-toggle-btn')) {
+          panel.classList.remove('active');
+        }
+      }
+    });
+  </script>
+
+<script>
+  // 隱私權政策摺疊功能
+    function togglePrivacyPanel() {
+      const panel = document.getElementById('privacyPanel');
+      const isOpen = panel.classList.toggle('active');
+      panel.setAttribute('aria-hidden', !isOpen);
+      if(isOpen){
+        panel.focus();
+        setTimeout(()=>{ panel.scrollIntoView({behavior:'smooth', block:'end'}); }, 100);
+      }
+    }
+    document.addEventListener('keydown', function(e){
+      if(e.key === "Escape"){
+        document.getElementById('privacyPanel').classList.remove('active');
+      }
+    });
+    document.addEventListener('click', function(e){
+      var panel = document.querySelector('.privacy-panel');
+      if (panel && panel.classList.contains('active')) {
+        if (!panel.contains(e.target) && !e.target.classList.contains('privacy-toggle-btn')) {
+          panel.classList.remove('active');
+        }
+      }
+    });
+</script>
+
+<style>
+/* 隱私權政策專用CSS */
+footer {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  background: #232323;
+  color: #fff;
+  text-align: center;
+  padding: 24px 0 16px 0;
+  box-sizing: border-box;
+  border-top: 2.5px solid #3550a388;
+  position: relative;
+  z-index: 10;
+}
+.footer-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+.privacy-toggle-btn {
+  background: #fff;
+  color: #232323;
+  border: none;
+  outline: none;
+  font-size: 1em;
+  padding: 10px 32px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px #0002;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-weight: bold;
+  margin-bottom: 10px;
+  letter-spacing: 0.1em;
+}
+.privacy-toggle-btn:active {
+  background: #eaeaea;
+}
+.privacy-panel {
+  max-width: 680px;
+  margin: 0 auto;
+  background: #22305a; /* 深藍色 */
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #0001;
+  padding: 18px 18px 10px 18px;
+  text-align: left;
+  font-size: 1em;
+  line-height: 1.82;
+  position: relative;
+  margin-bottom: 10px;
+  display: none;
+  animation: fadeIn 0.3s;
+  z-index: 2;
+}
+.privacy-panel.active {
+  display: block;
+  animation: fadeIn 0.25s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px);}
+  to   { opacity: 1; transform: translateY(0);}
+}
+  .privacy-panel h2 {
+    font-size: 1.25em;
+    margin-top: 1.6em;
+    margin-bottom: 0.5em;
+    color: #8abfff; /* 輕微亮藍，可加強辨識 */
+    font-weight: bold;
+  }
+  .privacy-panel ul { margin: 0 0 1em 1.2em; }
+  .privacy-panel li { margin-bottom: 0.5em; }
+  .privacy-close-btn {
+    position: absolute;
+    right: 14px;
+    top: 12px;
+    font-size: 1.4em;
+    background: transparent;
+    border: none;
+    color: #b0c7ff;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .privacy-close-btn:hover {
+    background: #294380;
+    color: #fff;
+  }
+  /* 捲軸優化（深色風格） */
+  .privacy-panel {
+    scrollbar-color: #3b4a77 #22305a;
+    scrollbar-width: thin;
+  }
+  .privacy-panel::-webkit-scrollbar {
+    width: 8px;
+    background: #22305a;
+  }
+  .privacy-panel::-webkit-scrollbar-thumb {
+    background: #3b4a77;
+    border-radius: 6px;
+  }
+  @media (max-width: 600px) {
+    .privacy-panel {
+      max-width: 98vw;
+      padding: 12px 6vw 8px 6vw;
+      font-size: 0.98em;
+    }
+    .privacy-toggle-btn {
+      width: 90vw;
+      max-width: 400px;
+      font-size: 1em;
+    }
+}
+</style>
+
+
+<!-- Lightbox 彈窗（放在 body 最下方） -->
+<div id="media-lightbox" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:9999;align-items:center;justify-content:center;background:rgba(28,36,48,0.96);">
+  <span id="img-lightbox-close" title="關閉" style="position:absolute;top:34px;right:26px;font-size:2.5em;color:#fff;cursor:pointer;">&times;</span>
+  <span id="img-lightbox-left" title="上一張" style="position:absolute;left:6vw;top:50%;transform:translateY(-50%);font-size:2em;color:#fff;cursor:pointer;user-select:none;">&#8592;</span>
+  <span id="img-lightbox-right" title="下一張" style="position:absolute;right:6vw;top:50%;transform:translateY(-50%);font-size:2em;color:#fff;cursor:pointer;user-select:none;">&#8594;</span>
+  <img id="img-lightbox-img" src="" alt="放大圖片" style="max-width:84vw;max-height:82vh;border-radius:12px;box-shadow:0 8px 40px #000a;background:#fff;">
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // proof-img-list 區塊下的 img
+  const allImgs = Array.from(document.querySelectorAll('.proof-img-list img'));
+  const modal = document.getElementById('media-lightbox');
+  const modalImg = document.getElementById('img-lightbox-img');
+  const btnLeft = document.getElementById('img-lightbox-left');
+  const btnRight = document.getElementById('img-lightbox-right');
+  const btnClose = document.getElementById('img-lightbox-close');
+  let curIdx = 0;
+
+  function showImg(idx) {
+    if(idx < 0) idx = 0;
+    if(idx >= allImgs.length) idx = allImgs.length-1;
+    curIdx = idx;
+    modalImg.src = allImgs[curIdx].src;
+    btnLeft.style.display = (curIdx === 0) ? 'none' : 'block';
+    btnRight.style.display = (curIdx === allImgs.length-1) ? 'none' : 'block';
+  }
+
+  // 點任一圖片開啟大圖
+  allImgs.forEach((img, i) => {
+    img.addEventListener('click', function(){
+      showImg(i);
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  btnLeft.onclick = function(e){ e.stopPropagation(); showImg(curIdx-1); };
+  btnRight.onclick = function(e){ e.stopPropagation(); showImg(curIdx+1); };
+  btnClose.onclick = function(){
+    modal.style.display = 'none';
+    modalImg.src = '';
+    document.body.style.overflow = '';
+  };
+  modal.onclick = function(e){
+    if(e.target === this){
+      modal.style.display = 'none';
+      modalImg.src = '';
+      document.body.style.overflow = '';
+    }
+  };
+  document.addEventListener('keydown', function(e){
+    if(modal.style.display === 'flex'){
+      if(e.key === 'ArrowLeft') showImg(curIdx-1);
+      if(e.key === 'ArrowRight') showImg(curIdx+1);
+      if(e.key === 'Escape') {
+        modal.style.display = 'none';
+        modalImg.src = '';
+        document.body.style.overflow = '';
+      }
+    }
+  });
+});
+
+  // 點擊圖片開啟 lightbox
+  imgList.forEach((img, i) => {
+    img.addEventListener('click', () => {
+      curIndex = i;
+      showImg(curIndex);
+      modal.style.display = "flex";
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  function showImg(idx) {
+    // 防呆
+    if(idx < 0) idx = 0;
+    if(idx >= imgList.length) idx = imgList.length - 1;
+    curIndex = idx;
+    modalImg.src = imgList[curIndex].src;
+    // 箭頭顯示控制
+    arrowLeft.style.display = (curIndex === 0) ? 'none' : 'block';
+    arrowRight.style.display = (curIndex === imgList.length - 1) ? 'none' : 'block';
+  }
+
+// 顯示/隱藏箭頭
+function showArrows() {
+  document.querySelector('.img-lightbox-arrow.left').style.display = (!isVideo && curIndex > 0) ? 'block' : 'none';
+  document.querySelector('.img-lightbox-arrow.right').style.display = (!isVideo && curIndex < imgList.length - 1) ? 'block' : 'none';
+}
+
+// 切換圖片
+function showImg(idx) {
+  if (isVideo) return;
+  if (idx < 0 || idx >= imgList.length) return;
+  curIndex = idx;
+  modalImg.src = imgList[curIndex].src;
+  showArrows();
+}
+
+  // 左右箭頭
+  arrowLeft.onclick = (e) => { e.stopPropagation(); showImg(curIndex-1); };
+  arrowRight.onclick = (e) => { e.stopPropagation(); showImg(curIndex+1); };
+
+  // 關閉按鈕
+  closeBtn.onclick = function(){
+    modal.style.display = "none";
+    modalImg.src = '';
+    document.body.style.overflow = '';
+  };
+
+  // 點彈窗背景關閉
+  modal.onclick = function(e){
+    if(e.target === this){
+      this.style.display = "none";
+      modalImg.src = '';
+      document.body.style.overflow = '';
+    }
+  };
+
+// 鍵盤左右
+window.addEventListener('keydown', function(e){
+  if(modal.style.display === "flex") {
+    if(!isVideo && e.key==="ArrowLeft") showImg(curIndex-1);
+    if(!isVideo && e.key==="ArrowRight") showImg(curIndex+1);
+    if(e.key==="Escape") {
+      modal.style.display = "none";
+      modalImg.src = '';
+      document.body.style.overflow = '';
+      if(isVideo){
+        const iframe = modalVideo.querySelector('iframe');
+        iframe.src = iframe.src;
+      }
+    }
+  }
+});
+
+// 手機滑動
+let startX = null;
+modalImg.addEventListener('touchstart', function(e){
+  if (isVideo) return;
+  if (e.touches.length === 1) startX = e.touches[0].clientX;
+});
+modalImg.addEventListener('touchend', function(e){
+  if (isVideo || startX === null) return;
+  let dx = e.changedTouches[0].clientX - startX;
+  if (Math.abs(dx) > 40) {
+    if (dx < 0 && curIndex < imgList.length-1) showImg(curIndex+1);
+    if (dx > 0 && curIndex > 0) showImg(curIndex-1);
+  }
+  startX = null;
+});
+
+</script>
+</div>
+</div>
+</div>
+</div></div>
+
+<!-- 影片 Lightbox 彈窗 -->
+<div id="video-lightbox" style="display:none;align-items:center;justify-content:center;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(24,36,60,0.96);z-index:9999;">
+  <div id="video-lightbox-inner" style="background:#23293a;border-radius:18px;box-shadow:0 8px 40px #000a;padding:16px 12px;max-width:94vw;max-height:84vh;display:flex;flex-direction:column;align-items:center;position:relative;">
+    <button class="close-btn" title="關閉" onclick="closeVideoLightbox()" style="position:absolute;right:18px;top:10px;font-size:2.2em;color:#fff;background:none;border:none;cursor:pointer;opacity:0.85;">&times;</button>
+    <iframe id="lightbox-player" src="" frameborder="0" allowfullscreen allow="autoplay" style="width:68vw;max-width:860px;height:38vw;max-height:480px;background:#000;border-radius:10px;"></iframe>
+  </div>
+</div>
+<script>
+  // 影片縮圖點擊放大
+  document.querySelectorAll('.proof-video-thumb').forEach(function(thumb){
+    thumb.addEventListener('click', function(){
+      var vid = thumb.getAttribute('data-vid');
+      var src = 'https://drive.google.com/file/d/' + vid + '/preview';
+      var player = document.getElementById('lightbox-player');
+      player.src = src;
+      document.getElementById('video-lightbox').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    });
+  });
+  function closeVideoLightbox(){
+    document.getElementById('video-lightbox').style.display = 'none';
+    document.getElementById('lightbox-player').src = '';
+    document.body.style.overflow = '';
+  }
+  document.getElementById('video-lightbox').addEventListener('click',function(e){
+    if(e.target === this){ closeVideoLightbox(); }
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key === "Escape") closeVideoLightbox();
+  });
+</script>
+<style>
+.proof-video-row {
+  display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
+}
+.proof-video-thumb {
+  width: 170px; height: 96px; border-radius: 10px;
+  box-shadow: 0 2px 12px #0002;
+  overflow: hidden; background: #222;
+  cursor: pointer; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.proof-video-thumb img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.proof-video-thumb .play-icon {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  color: #fff; font-size: 2.1em; opacity: 0.85; pointer-events: none;
+  text-shadow: 0 2px 12px #000;
+}
+@media (max-width: 700px) {
+  .proof-video-row { gap: 8px;}
+  .proof-video-thumb { width: 38vw; height: 22vw; min-width:88px; min-height:48px;}
+  #video-lightbox-inner iframe { width: 92vw !important; height: 52vw !important; }
+}
+.analyze-img-row.vertical-row {
+  flex-direction: column !important;
+  gap: 0 !important;
+}
+.analyze-img-row.vertical-row > .center-items,
+.analyze-img-row.vertical-row > .analyze-main {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+.analyze-img-row.vertical-row > .center-items {
+  margin-bottom: 18px;
+}
+</style>
+<script>
+const backToTop = document.getElementById('backToTop');
+window.addEventListener('scroll', function() {
+  if (window.scrollY > 380) backToTop.style.display = 'flex';
+  else backToTop.style.display = 'none';
+});
+backToTop.addEventListener('click', function() {
+  window.scrollTo({top: 0, behavior: 'smooth'});
+});
+</script>
+<!-- ====== 隱私權政策 Footer 區塊放這裡 ====== -->
+<footer>
+  <div class="footer-container">
+    <button class="privacy-toggle-btn" onclick="document.querySelector('.privacy-panel').classList.add('active')">
+      隱私權政策
+    </button>
+    <div id="privacyPanel" class="privacy-panel" tabindex="-1" aria-hidden="true">
+    <button class="privacy-close-btn" onclick="togglePrivacyPanel()" aria-label="關閉">&times;</button>
+    <h2>賭局 隱私權政策</h2>
+    <p>歡迎您使用「賭局」（以下簡稱本網站）。為保障您的隱私權與個人資料安全，請詳閱本政策內容，當您使用本網站時，即表示您同意本政策。</p>
+    <hr>
+   <h2>一、資料蒐集範圍</h2>
+<p>
+本網站會依實際服務需求，蒐集下列個人資料，並分別說明如下：
+</p>
+<ol>
+  <li>
+    <b>聯絡資訊</b>
+    <ul>
+      <li>蒐集情境：當用戶透過聯絡表單、電子郵件或其他管道，主動與我們聯絡或提交案件時。</li>
+      <li>使用目的：用於案件聯繫、身份確認、通知案件進度。</li>
+      <li>保存原則：僅於案件處理及爭議/訴訟需要期間保存，相關程序終止後即刪除。</li>
+    </ul>
+  </li>
+  <li>
+    <b>身分證明文件</b>
+    <ul>
+      <li>蒐集情境：當案件或第三方權益人需要進行身份驗證時，管理員得請求您提供身分證明文件。</li>
+      <li>使用目的：僅用於核對身份、避免冒名申請、維護案件公正性。</li>
+      <li>保存原則：訴訟結束後即予銷毀，不會另作他用。</li>
+    </ul>
+  </li>
+  <li>
+    <b>證據資料（截圖、影片、對話紀錄等）</b>
+    <ul>
+      <li>蒐集情境：當用戶主動上傳案件相關證據時。</li>
+      <li>蒐集項目：截圖、影片、文字紀錄、文件等。</li>
+      <li>使用目的：僅用於案件審核、糾紛處理、依法配合司法或訴訟程序。</li>
+      <li>保存原則：於案件、爭議或訴訟終止後即予刪除，除法律另有規定。</li>
+    </ul>
+  </li>
+  <li>
+    <b>第三方資訊</b>
+    <ul>
+      <li>蒐集情境：用戶所上傳的證據資料中，可能包含第三方之個人資料（如姓名、肖像、聯絡方式、對話內容等）。</li>
+      <li>蒐集項目：第三方姓名、肖像、聯絡方式、對話或其他可識別資訊。</li>
+      <li>使用目的：僅限於案件審核、糾紛處理、配合司法或訴訟程序之需要，不會用於其他目的或商業用途。</li>
+      <li>保存原則：與案件相關資料一併保存，於案件、爭議或訴訟終止後即予刪除，除法律另有規定。</li>
+      <li>第三方權益：若第三方認為其權益受損，可依本網站申訴流程提出刪除或遮蔽申請，網站將依法審查處理。</li>
+    </ul>
+  </li>
+  <li><strong>本網站不會主動蒐集您的IP位址、瀏覽器資訊、使用時間等技術性資料，亦不會使用Cookies或其他追蹤技術</strong>。所有蒐集之資料，僅限於本網站服務、案件處理及法定必要用途，絕不會用於任何商業或行銷用途。  </li>
+    </ul>
+    <hr>
+    <h2>二、資料使用方式</h2>
+    <ul>
+      <li>以上資料將僅用於<b>案件聲明、糾紛佐證、用戶間爭議處理</b>等本網站訴訟範圍內之用途。</li>
+      <li>本網站<b>不會將您的個人資料用於其他用途</b>，也不會出售、交換、出租，除非經您同意或法律要求。</li>
+      <li>若您主動公開留言、上傳截圖或影片，該內容可能會被其他用戶所見，請自行斟酌是否公開。</li>
+    </ul>
+    <hr>
+    <h2>三、資料安全與保護</h2>
+    <ul>
+      <li>本網站採取合理資訊安全措施，保障資料安全。</li>
+      <li>僅有授權人員可依業務需要查閱您的資料，未經授權人員不得擅自存取。</li>
+<li><b>非公開個人資料</b>，係指用戶向本網站管理員所提供，但<strong>未在本網站公開展示</strong>，僅限管理員或特定人員查閱之個人相關資訊。<br></li>
+  <li>例如：用戶透過聯絡表單或電子郵件提交的截圖、證據檔案、聯絡方式等，若尚未公開於本網站，均屬於非公開個人資料。<br></li>
+  <li><b>一旦資料被公開展示於本網站（如留言區、證據區、公開截圖等），即不再屬於非公開個人資料。</b></li>
+    </ul>
+    <hr>
+<h2>四、用戶權利</h2>
+<ul>
+  <li>您可依個人資料保護法，向我們請求查詢、閱覽、複製、補充、更正、停止蒐集、處理、利用或刪除您的個人資料。</li>
+  <li>若您有上述需求，請透過本網站聯絡我們，並請提供可識別身分之相關資訊。</li>
+  <li>用戶上傳但尚未公開於本網站的截圖、影片或相關檔案，經本人申請且審核同意後，得請求刪除。</li>
+  <li><b>已公開展示於本網站的證據資料（如截圖、影片等），原則上不受理刪除或更正申請，除非法律另有強制規定或經雙方協議。</b></li>
+  <li>您如欲撤回同意本網站處理您的個人資料，請與我們聯絡。撤回同意後，網站將停止處理您的個人資料，但已公開之內容原則上不作刪除或修正，除非法律另有強制規定。</li>
+  <li>您的個人資料將依本網站營運及訴訟需求保存，除法律另有規定外，於相關訴訟終止後即予刪除。</li>
+</ul>
+    <hr>
+<h2>五、政策修改</h2>
+<ul>
+  <li>本政策如有修正，將公布於本網站，恕不另行個別通知。</li>
+  <li>本網站有權隨時依實際需要及法令規定調整本政策內容，建議您隨時留意本頁公告內容。</li>
+  <li>重大變更事項（如資料蒐集範圍、使用目的調整等），本網站將於首頁或會員頁面顯著公告。</li>
+  <li>新修訂政策自公告日起生效，除非另有說明。</li>
+  <li>如您不同意修正內容，請立即停止使用本網站。惟因案件處理或法律規定，您所提供之資料將依法保存，無法任意刪除。</li>
+</ul>    <hr>
+    <p><b>貓崎雪 敬上</b></p>
+  </div>
+    <div style="margin-top:14px;font-size:0.97em;opacity:0.85;">
+      &copy; 2025 Your Website Name
+    </div>
+    </div>
+</footer>
+<!-- ====== 隱私權政策 Footer 區塊結束 ====== -->
+</body>
+</html>
