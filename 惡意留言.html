@@ -506,7 +506,43 @@ background: #253b5a;
       padding-left: 2px;
       text-align: center;
     }
-
+.analysis-list a {
+  color: #4ecaff;
+  text-decoration: none;
+  border-bottom: 2px solid #47aaff77;
+  transition: color 0.16s, border 0.17s;
+  font-weight: bold;
+  padding: 0 2px;
+}
+.analysis-list a:hover,
+.analysis-list a:focus {
+  color: #fff05a;
+  background: linear-gradient(90deg,#49d0ff20 60%,#ffe17a44 100%);
+  border-bottom: 2px solid #ffc445;
+  text-shadow: 0 2px 8px #47aaff50;
+  border-radius: 4px;
+}
+.analysis-list a.btn-link {
+  display: inline-block;
+  background: linear-gradient(90deg,#47aaff 60%,#29b1ff 120%);
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 7px;
+  padding: 4px 18px 3px 18px;
+  margin: 0 2px;
+  text-decoration: none;
+  box-shadow: 0 2px 8px #47aaff22;
+  border-bottom: 2.5px solid #ffe6b044;
+  transition: background 0.18s, color 0.15s, transform 0.1s;
+  letter-spacing: 0.05em;
+}
+.analysis-list a.btn-link:hover,
+.analysis-list a.btn-link:focus {
+  background: linear-gradient(90deg,#ffc445 70%,#47aaff 100%);
+  color: #22335a !important;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 12px #ffc44555;
+}
 </style>
 </head>
 <body>
@@ -702,7 +738,7 @@ document.addEventListener('DOMContentLoaded', renderMessages);
         </div>
         <div class="analyze-main">
           <div class="analysis-quote" style="margin-top:0;">
-            這段影片記錄了 o雨楓o 在留言板中的語氣及爭議內容。請注意：
+            這段影片記錄了o雨楓o在留言板中的語氣及爭議內容。請注意：
             <ul>
               <li>影片中出現多次反問、推責、情緒勒索等惡意語氣。</li>
               <li>如有疑慮，建議可暫停於重點片段，對照留言內容。</li>
@@ -711,6 +747,20 @@ document.addEventListener('DOMContentLoaded', renderMessages);
           <div class="analyze-point-title">分析重點</div>
           <ul class="analyze-list">
             <li><span class="analysis-key">攻擊手法：</span>羞辱、反問、倒打一耙、精神健康羞辱。</li>
+            <li><span class="analysis-key">總結：</span>這些話語的本質與心理風險。實際上：這些話語充滿「激將法、責任轉嫁、醫療污名、否認事實、話語操控、人格否定」等心理霸凌與話術操控特色，長期下來會讓受害者懷疑自己、被孤立、甚至自責，這就是語言暴力的本質。</li>
+<ul class="analysis-list">
+  <li>
+    <span class="analysis-key"></span>
+    <span class="analysis-purpose">
+      <a href="https://nekosakiyuki.github.io/Bullying.Analysis/%E5%BF%83%E7%90%86%E9%9C%B8%E5%87%8C%EF%BC%8E%E8%AA%9E%E6%B0%A3%E6%93%8D%E6%8E%A7%E9%80%90%E5%8F%A5%E5%88%86%E6%9E%90.html" class="btn-link">心理霸凌．語氣操控逐句分析</a>
+    </span>
+  </li>
+  <li>
+    <span class="analysis-purpose">
+      <a href="https://nekosakiyuki.github.io/Message.board.reply/%E5%BD%B1%E7%89%87%E7%95%99%E8%A8%80%E6%9D%BF%E5%9B%9E%E8%A6%86.html" class="btn-link">留言回覆</a>
+    </span>
+  </li>
+</ul>
             <li><span class="analysis-purpose">目的：</span>製造你才是問題的假象、讓旁觀者誤判。</li>
           </ul>
         </div>
