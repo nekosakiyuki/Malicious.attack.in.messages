@@ -198,6 +198,7 @@ background: #253b5a;
   display: none; /* 預設隱藏，由JS控制 */
   align-items: center;
   justify-content: center;
+  display: flex;
   transition: background 0.2s, transform 0.18s;
   font-weight: bold;
 }
@@ -543,9 +544,298 @@ background: #253b5a;
   transform: translateY(-2px) scale(1.04);
   box-shadow: 0 4px 12px #ffc44555;
 }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0; right: 0; bottom: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(36,41,46,0.82);
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .modal.open {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-arrow {
+      background: #fff;
+      border: none;
+      width: 44px;
+      height: 44px;
+      margin: 0 12px;
+      border-radius: 50%;
+      box-shadow: 0 1px 8px #0002;
+      cursor: pointer;
+      font-size: 2rem;
+      color: #2563eb;
+      opacity: 0.86;
+      transition: background 0.15s, opacity 0.15s;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+    }
+    .modal-arrow:disabled {
+      opacity: 0.28;
+      cursor: default;
+    }
+    .modal-arrow:hover:not(:disabled) {
+      background: #e0e7ff;
+      opacity: 1;
+    }
+    .modal-content {
+      position: relative;
+      background: #fff;
+      border-radius: 10px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 4px 32px #0007;
+      animation: fadeIn 0.13s;
+      max-width: 92vw;
+      max-height: 82vh;
+    }
+    .modal-img {
+      max-width: 75vw;
+      max-height: 68vh;
+      display: block;
+      border-radius: 8px;
+      background: #e5e7eb;
+      box-shadow: 0 2px 10px #0001;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: #fff;
+      border: none;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      box-shadow: 0 1px 6px #0001;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: #333;
+      opacity: 0.7;
+      transition: background 0.15s, opacity 0.15s;
+      z-index: 11;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-close:hover {
+      background: #f3f4f6;
+      opacity: 1;
+    }
+    @media (max-width: 600px) {
+      .album-thumb { width: 60vw; height: 60vw; min-width: 92px; min-height: 92px;}
+      .modal-content { max-width: 98vw; padding: 2px;}
+      .modal-img { max-width: 89vw; max-height: 54vh;}
+      .modal-arrow { width: 36px; height: 36px; font-size: 1.3rem; margin: 0 3px; }
+      .modal-close { width: 28px; height: 28px; font-size: 1.13rem;}
+    }
+.modal-page {
+  margin-top: 14px;
+  font-size: 1.11em;
+  color: #325d9a;
+  font-weight: bold;
+  background: rgba(255,255,255,0.25);
+  border-radius: 6px;
+  padding: 5px 16px 4px 16px;
+  letter-spacing: 1px;
+  display: inline-block;
+}
+    #consentModal, #secondModal, #blockModal, #privacyModal {
+      position: fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.62);
+      display:none; align-items:center; justify-content:center; z-index:10000;
+    }
+    .modal-box {
+      background: #fff; color:#222; border-radius: 12px; padding: 36px 26px 26px 26px; max-width: 350px;
+      box-shadow: 0 4px 24px #0004; text-align: center;
+      position: relative;
+    }
+    .modal-btn { margin: 18px 6px 0 6px; padding: 8px 24px; font-size: 1em; border-radius: 7px; border:none; background: #0090ff; color:#fff; cursor: pointer; }
+    .modal-btn.no { background: #aaa; color: #fff; }
+    #mainContent { display: none; }
+    .privacy-link {
+      display: inline-block;
+      color: #0997e7;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: 6px;
+      font-size: 1em;
+    }
+#privacyModal .privacy-modal-box {
+  max-width: 540px;
+  padding: 0;
+  color: #19335a;
+  background: #f8faff;
+  font-size: 1.04em;
+  line-height: 1.8;
+  text-align: left;
+  position: relative;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#privacyModal .close {
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1.5em;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.15s;
+}
+#privacyModal .close:hover { color: #0090ff; }
+
+#privacyModal .privacy-modal-content {
+  padding: 32px 22px 24px 22px;
+  overflow-y: auto;
+  max-height: 81vh;
+  box-sizing: border-box;
+}
+@media (max-width: 600px) {
+  #privacyModal .privacy-modal-box { max-width: 98vw; }
+  #privacyModal .privacy-modal-content { padding: 13vw 4vw 8vw 4vw; max-height: 76vh;}
+}
+
 </style>
 </head>
 <body>
+  <div id="consentModal" style="display:flex;">
+    <div class="modal-box">
+      <h2>台灣限定內容</h2>
+      <div style="margin:12px 0 10px 0;">本頁僅限台灣地區瀏覽。<br>請同意偵測您的IP來源以進入。</div>
+      <button class="modal-btn" id="consentYes">同意</button>
+      <button class="modal-btn no" id="consentNo">不同意</button>
+      <br>
+      <span class="privacy-link" id="showPrivacy">隱私權政策</span>
+    </div>
+  </div>
+
+  <div id="secondModal">
+    <div class="modal-box">
+      <h2>說明</h2>
+      <p>
+        每次彈窗都明確告知且徵得同意，且不額外儲存 IP，台灣、歐盟地區是合理的。<br>
+        僅偵測不主動儲存 IP，用於法律偵辦。<br>
+        點同意代表允許本頁偵測IP進入。
+      </p>
+      <button class="modal-btn" id="secondYes">同意</button>
+      <button class="modal-btn no" id="secondNo">不同意</button>
+    </div>
+  </div>
+
+  <div id="blockModal">
+    <div class="modal-box">
+      <h2>無法瀏覽</h2>
+      <div style="margin:12px 0 10px 0;">您的IP不在台灣地區，或您拒絕提供IP，無法瀏覽本頁內容。</div>
+    </div>
+  </div>
+
+<div id="privacyModal">
+  <div class="modal-box privacy-modal-box">
+    <button class="close" id="closePrivacy" title="關閉">&times;</button>
+    <div class="privacy-modal-content">
+    <h2>對話分析 隱私權政策</h2>
+    <p>歡迎您使用對話分析（以下簡稱本網站）。為保障您的隱私權與個人資料安全，請詳閱本政策內容，當您使用本網站時，即表示您同意本政策。</p>
+    <hr>
+   <h2>一、資料蒐集範圍</h2>
+<p>
+本網站會依實際服務需求，蒐集下列個人資料，並分別說明如下：
+</p>
+<ol>
+  <li>
+    <b>聯絡資訊</b>
+    <ul>
+      <li>蒐集情境：當用戶透過聯絡表單、電子郵件或其他管道，主動與我們聯絡或提交案件時。</li>
+      <li>使用目的：用於案件聯繫、身份確認、通知案件進度。</li>
+      <li>保存原則：僅於案件處理及爭議/訴訟需要期間保存，相關程序終止後即刪除。</li>
+    </ul>
+  </li>
+  <li>
+    <b>身分證明文件</b>
+    <ul>
+      <li>蒐集情境：當案件或第三方權益人需要進行身份驗證時，管理員得請求您提供身分證明文件。</li>
+      <li>使用目的：僅用於核對身份、避免冒名申請、維護案件公正性。</li>
+      <li>保存原則：訴訟結束後即予銷毀，不會另作他用。</li>
+    </ul>
+  </li>
+  <li>
+    <b>證據資料（截圖、影片、對話紀錄等）</b>
+    <ul>
+      <li>蒐集情境：當用戶主動上傳案件相關證據時。</li>
+      <li>蒐集項目：截圖、影片、文字紀錄、文件等。</li>
+      <li>使用目的：僅用於案件審核、糾紛處理、依法配合司法或訴訟程序。</li>
+      <li>保存原則：於案件、爭議或訴訟終止後即予刪除，除法律另有規定。</li>
+    </ul>
+  </li>
+  <li>
+    <b>第三方資訊</b>
+    <ul>
+      <li>蒐集情境：用戶所上傳的證據資料中，可能包含第三方之個人資料（如姓名、肖像、聯絡方式、對話內容等）。</li>
+      <li>蒐集項目：第三方姓名、肖像、聯絡方式、對話或其他可識別資訊。</li>
+      <li>使用目的：僅限於案件審核、糾紛處理、配合司法或訴訟程序之需要，不會用於其他目的或商業用途。</li>
+      <li>保存原則：與案件相關資料一併保存，於案件、爭議或訴訟終止後即予刪除，除法律另有規定。</li>
+      <li>第三方權益：若第三方認為其權益受損，可依本網站申訴流程提出刪除或遮蔽申請，網站將依法審查處理。</li>
+    </ul>
+  </li>
+  <li><strong>本網站不會主動蒐集您的IP位址、瀏覽器資訊、使用時間等技術性資料，亦不會使用Cookies或其他追蹤技術</strong>。所有蒐集之資料，僅限於本網站服務、案件處理及法定必要用途，絕不會用於任何商業或行銷用途。  </li>
+    </ul>
+    <hr>
+    <h2>二、資料使用方式</h2>
+    <ul>
+      <li>以上資料將僅用於<b>案件聲明、糾紛佐證、用戶間爭議處理</b>等本網站訴訟範圍內之用途。</li>
+      <li>本網站<b>不會將您的個人資料用於其他用途</b>，也不會出售、交換、出租，除非經您同意或法律要求。</li>
+      <li>若您主動公開留言、上傳截圖或影片，該內容可能會被其他用戶所見，請自行斟酌是否公開。</li>
+    </ul>
+    <hr>
+    <h2>三、資料安全與保護</h2>
+    <ul>
+      <li>本網站採取合理資訊安全措施，保障資料安全。</li>
+      <li>僅有授權人員可依業務需要查閱您的資料，未經授權人員不得擅自存取。</li>
+<li><b>非公開個人資料</b>，係指用戶向本網站管理員所提供，但<strong>未在本網站公開展示</strong>，僅限管理員或特定人員查閱之個人相關資訊。<br></li>
+  <li>例如：用戶透過聯絡表單或電子郵件提交的截圖、證據檔案、聯絡方式等，若尚未公開於本網站，均屬於非公開個人資料。<br></li>
+  <li><b>一旦資料被公開展示於本網站（如留言區、證據區、公開截圖等），即不再屬於非公開個人資料。</b></li>
+    </ul>
+    <hr>
+<h2>四、用戶權利</h2>
+<ul>
+  <li>您可依個人資料保護法，向我們請求查詢、閱覽、複製、補充、更正、停止蒐集、處理、利用或刪除您的個人資料。</li>
+  <li>若您有上述需求，請透過本網站聯絡我們，並請提供可識別身分之相關資訊。</li>
+  <li>用戶上傳但尚未公開於本網站的截圖、影片或相關檔案，經本人申請且審核同意後，得請求刪除。</li>
+  <li><b>已公開展示於本網站的證據資料（如截圖、影片等），原則上不受理刪除或更正申請，除非法律另有強制規定或經雙方協議。</b></li>
+  <li>您如欲撤回同意本網站處理您的個人資料，請與我們聯絡。撤回同意後，網站將停止處理您的個人資料，但已公開之內容原則上不作刪除或修正，除非法律另有強制規定。</li>
+  <li>您的個人資料將依本網站營運及訴訟需求保存，除法律另有規定外，於相關訴訟終止後即予刪除。</li>
+</ul>
+    <hr>
+<h2>五、政策修改</h2>
+<ul>
+  <li>本政策如有修正，將公布於本網站，恕不另行個別通知。</li>
+  <li>本網站有權隨時依實際需要及法令規定調整本政策內容，建議您隨時留意本頁公告內容。</li>
+  <li>重大變更事項（如資料蒐集範圍、使用目的調整等），本網站將於首頁或會員頁面顯著公告。</li>
+  <li>新修訂政策自公告日起生效，除非另有說明。</li>
+  <li>如您不同意修正內容，請立即停止使用本網站。惟因案件處理或法律規定，您所提供之資料將依法保存，無法任意刪除。</li>
+</ul>    <hr>
+    <p><b>貓崎雪 敬上</b></p>
+  </div>
+    <div style="margin-top:14px;font-size:0.97em;opacity:0.85;">
+      &copy; 2025 Your Website Name
+    </div>
+    </div>
+  </div>
+</div>
+
   <!-- 浮水印 -->
 <div style="
     position: fixed;
@@ -569,7 +859,7 @@ document.getElementById('myVideo').addEventListener('keydown', e => e.preventDef
 </script>
 <!-- 回到頂部按鈕 -->
 <button id="backToTop" title="回到頂部" aria-label="回到頂部">↑</button>
-
+  <div id="mainContent">
 <!-- 澄清公告區 -->
 <div class="section">
   <div class="section-title">📢 公告</div>
@@ -928,6 +1218,54 @@ document.addEventListener('DOMContentLoaded', renderMessages);
   </div>
 </div>
 
+  <script>
+    const IPINFO_TOKEN = "ea73d32ca2e230";
+    const consentModal = document.getElementById('consentModal');
+    const secondModal = document.getElementById('secondModal');
+    const blockModal = document.getElementById('blockModal');
+    const privacyModal = document.getElementById('privacyModal');
+    const mainContent = document.getElementById('mainContent');
+
+    // 第一次同意
+    document.getElementById('consentYes').onclick = function() {
+      consentModal.style.display = 'none';
+      secondModal.style.display = 'flex';
+    };
+    document.getElementById('consentNo').onclick = function() {
+      consentModal.style.display = 'none';
+      blockModal.style.display = 'flex';
+    };
+
+    // 第二次同意
+document.getElementById('secondYes').onclick = async function() {
+  secondModal.style.display = 'none';
+  try {
+    const res = await fetch(`https://ipinfo.io/json?token=${IPINFO_TOKEN}`);
+    const data = await res.json();
+    if (data.country === 'TW') {
+      window.location.href = "https://nekosaki_yuki.bobaboba.me/";
+    } else {
+      blockModal.style.display = 'flex';
+    }
+  } catch (e) {
+    blockModal.style.display = 'flex';
+  }
+};
+    document.getElementById('secondNo').onclick = function() {
+      secondModal.style.display = 'none';
+      blockModal.style.display = 'flex';
+    };
+
+    // 隱私權政策顯示/關閉
+    document.getElementById('showPrivacy').onclick = function() {
+      consentModal.style.display = 'none';
+      privacyModal.style.display = 'flex';
+    };
+    document.getElementById('closePrivacy').onclick = function() {
+      privacyModal.style.display = 'none';
+      consentModal.style.display = 'flex';
+    };
+  </script>
 <!-- ======= CSS for 分析圖片區塊 ======= -->
 <style>
 .analyze-accordion {
